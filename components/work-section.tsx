@@ -179,7 +179,7 @@ function WorkCard({
         </span>
         <h3
           className={cn(
-            "mt-3 font-[var(--font-bebas)] text-2xl md:text-4xl tracking-tight transition-colors duration-300",
+            "mt-3 font-(--font-bebas) text-2xl md:text-4xl tracking-tight transition-colors duration-300",
             isActive ? "text-accent" : "text-foreground",
           )}
         >
