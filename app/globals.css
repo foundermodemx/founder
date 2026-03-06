@@ -138,7 +138,11 @@
 }
 
 /* Custom selection color */
+:root {
+  --brand-accent: oklch(1 0 0);
+}
+
 ::selection {
-  background: oklch(0.7 0.2 45);
+  background: var(--brand-accent);
   color: oklch(0.08 0 0);
 }
