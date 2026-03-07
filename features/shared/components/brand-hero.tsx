@@ -5,6 +5,8 @@ import type { Brand } from "@/features/shared/data/brands";
 import { ScrambleTextOnHover } from "@/components/scramble-text";
 import { BitmapChevron } from "@/components/bitmap-chevron";
 import { BrandSplitFlap } from "@/features/shared/components/brand-split-flap";
+import { SplitFlapAudioProvider } from "@/components/split-flap-text";
+import { useLanguage } from "@/features/i18n/use-language";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -17,6 +19,11 @@ interface BrandHeroProps {
 export function BrandHero({ brand }: BrandHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
+
+  // Get translated brand data
+  const brandSlug = brand.slug as keyof typeof t.brand.brands;
+  const brandI18n = t.brand.brands[brandSlug];
 
   useEffect(() => {
     if (!sectionRef.current || !contentRef.current) return;
@@ -40,6 +47,7 @@ export function BrandHero({ brand }: BrandHeroProps) {
   return (
     <section
       ref={sectionRef}
+      id="hero"
       className="relative min-h-screen flex items-center px-6 md:px-12 lg:px-20 overflow-hidden"
     >
       {/* Left accent bar */}
@@ -62,23 +70,25 @@ export function BrandHero({ brand }: BrandHeroProps) {
           Founder / {brand.name}
         </span>
 
-        {/* Animated brand name */}
+        {/* Animated brand name with audio */}
         <div className="mt-6">
-          <BrandSplitFlap
-            text={brand.displayName}
-            color={brand.accent}
-            speed={80}
-          />
+          <SplitFlapAudioProvider defaultMuted={false}>
+            <BrandSplitFlap
+              text={brand.displayName}
+              color={brand.accent}
+              speed={80}
+            />
+          </SplitFlapAudioProvider>
         </div>
 
         {/* Tagline */}
         <h2 className="font-(--font-bebas) text-muted-foreground/60 text-[clamp(1rem,3vw,2rem)] mt-4 tracking-wide">
-          {brand.tagline}
+          {brandI18n?.tagline || brand.tagline}
         </h2>
 
         {/* Description */}
         <p className="mt-12 max-w-lg font-mono text-sm text-muted-foreground leading-relaxed">
-          {brand.description}
+          {brandI18n?.description || brand.description}
         </p>
 
         {/* CTAs */}
@@ -92,7 +102,7 @@ export function BrandHero({ brand }: BrandHeroProps) {
             }}
           >
             <ScrambleTextOnHover
-              text="View Projects"
+              text={t.brand.viewProjects}
               as="span"
               duration={0.6}
             />
@@ -102,7 +112,7 @@ export function BrandHero({ brand }: BrandHeroProps) {
             href="#services"
             className="font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-200"
           >
-            Our Services
+            {t.brand.ourServices}
           </a>
         </div>
       </div>
@@ -115,7 +125,7 @@ export function BrandHero({ brand }: BrandHeroProps) {
             borderColor: `color-mix(in oklch, ${brand.accent} 20%, transparent)`,
           }}
         >
-          Founder Ecosystem / {brand.name}
+          {t.brand.ecosystemLabel} / {brand.name}
         </div>
       </div>
     </section>

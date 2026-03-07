@@ -3,7 +3,8 @@ import { getBrandBySlug } from "@/features/shared/data/brands";
 import { BrandHero } from "@/features/shared/components/brand-hero";
 import { BrandServices } from "@/features/shared/components/brand-services";
 import { PortfolioGrid } from "@/features/shared/components/portfolio-grid";
-import { ColophonSection } from "@/components/colophon-section";
+import { ContactSection } from "@/features/leads/sections/contact-section";
+import { Footer } from "@/features/shared/components/footer/footer";
 
 const brand = getBrandBySlug("foundream")!;
 
@@ -20,7 +21,8 @@ export default function FoundreamPage() {
         <BrandHero brand={brand} />
         <BrandServices brand={brand} />
         <PortfolioGrid brandSlug="foundream" accentColor={brand.accent} />
-        <ColophonSection />
+        <ContactSection accentColor={brand.accent} />
+        <Footer variant="ecosystem" />
       </div>
     </main>
   );

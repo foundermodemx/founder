@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { getProjectsByBrand } from "@/features/shared/data/projects";
 import { ProjectCard } from "@/features/shared/components/project-card";
 import { SectionHeader } from "@/features/shared/components/section-header";
+import { useLanguage } from "@/features/i18n/use-language";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -22,6 +23,7 @@ export function PortfolioGrid({
 }: PortfolioGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
   const projects = getProjectsByBrand(brandSlug);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!gridRef.current) return;
@@ -51,12 +53,12 @@ export function PortfolioGrid({
   if (projects.length === 0) return null;
 
   return (
-    <section className="relative py-32 px-6 md:px-12 lg:px-20">
+    <section id="portfolio" className="relative py-32 px-6 md:px-12 lg:px-20">
       <SectionHeader
         number={sectionNumber}
-        label="Portfolio"
-        title="SELECTED WORK"
-        description="Projects delivered in this vertical."
+        label={t.work.portfolioLabel}
+        title={t.work.title}
+        description={t.work.projectsDelivered}
         accentColor={accentColor}
       />
 

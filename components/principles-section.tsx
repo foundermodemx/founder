@@ -1,61 +1,29 @@
-"use client"
+"use client";
 
-import { useRef, useEffect } from "react"
-import { HighlightText } from "@/components/highlight-text"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRef, useEffect } from "react";
+import { HighlightText } from "@/components/highlight-text";
+import { useLanguage } from "@/features/i18n/use-language";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 export function PrinciplesSection() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const principlesRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const principlesRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
-  const principles = [
-    {
-      number: "01",
-      titleParts: [
-        { text: "CLEAN", highlight: true },
-        { text: " CODE", highlight: false },
-      ],
-      description: "We write maintainable, scalable code. Every line serves a purpose.",
-      align: "left",
-    },
-    {
-      number: "02",
-      titleParts: [
-        { text: "AGILE", highlight: true },
-        { text: " DELIVERY", highlight: false },
-      ],
-      description: "Iterative development with continuous feedback. Ship fast, ship often.",
-      align: "right",
-    },
-    {
-      number: "03",
-      titleParts: [
-        { text: "USER ", highlight: false },
-        { text: "FOCUSED", highlight: true },
-      ],
-      description: "Every decision starts with the end user. Great UX is non-negotiable.",
-      align: "left",
-    },
-    {
-      number: "04",
-      titleParts: [
-        { text: "FUTURE ", highlight: false },
-        { text: "PROOF", highlight: true },
-      ],
-      description: "Built with tomorrow in mind. Modern stack, modern practices.",
-      align: "right",
-    },
-  ]
+  const principles = t.principles.items.map((item, i) => ({
+    ...item,
+    align: i % 2 === 0 ? "left" : "right",
+  }));
 
   useEffect(() => {
-    if (!sectionRef.current || !headerRef.current || !principlesRef.current) return
+    if (!sectionRef.current || !headerRef.current || !principlesRef.current)
+      return;
 
     const ctx = gsap.context(() => {
-      // Header slide in
       gsap.from(headerRef.current, {
         x: -60,
         opacity: 0,
@@ -66,12 +34,11 @@ export function PrinciplesSection() {
           start: "top 85%",
           toggleActions: "play none none reverse",
         },
-      })
+      });
 
-      // Each principle slides in from its aligned side
-      const articles = principlesRef.current?.querySelectorAll("article")
+      const articles = principlesRef.current?.querySelectorAll("article");
       articles?.forEach((article, index) => {
-        const isRight = principles[index].align === "right"
+        const isRight = principles[index]?.align === "right";
         gsap.from(article, {
           x: isRight ? 80 : -80,
           opacity: 0,
@@ -82,19 +49,27 @@ export function PrinciplesSection() {
             start: "top 85%",
             toggleActions: "play none none reverse",
           },
-        })
-      })
-    }, sectionRef)
+        });
+      });
+    }, sectionRef);
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, [principles]);
 
   return (
-    <section ref={sectionRef} id="principles" className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12">
+    <section
+      ref={sectionRef}
+      id="principles"
+      className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12"
+    >
       {/* Section header */}
       <div ref={headerRef} className="mb-24">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">03 / Principles</span>
-        <h2 className="mt-4 font-(--font-bebas) text-5xl md:text-7xl tracking-tight">HOW WE WORK</h2>
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
+          {t.principles.sectionLabel}
+        </span>
+        <h2 className="mt-4 font-(--font-bebas) text-5xl md:text-7xl tracking-tight">
+          {t.principles.title}
+        </h2>
       </div>
 
       {/* Staggered principles */}
@@ -103,7 +78,9 @@ export function PrinciplesSection() {
           <article
             key={index}
             className={`flex flex-col ${
-              principle.align === "right" ? "items-end text-right" : "items-start text-left"
+              principle.align === "right"
+                ? "items-end text-right"
+                : "items-start text-left"
             }`}
           >
             {/* Annotation label */}
@@ -129,10 +106,12 @@ export function PrinciplesSection() {
             </p>
 
             {/* Decorative line */}
-            <div className={`mt-8 h-px bg-border w-24 md:w-48 ${principle.align === "right" ? "mr-0" : "ml-0"}`} />
+            <div
+              className={`mt-8 h-px bg-border w-24 md:w-48 ${principle.align === "right" ? "mr-0" : "ml-0"}`}
+            />
           </article>
         ))}
       </div>
     </section>
-  )
+  );
 }

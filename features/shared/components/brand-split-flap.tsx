@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   SplitFlapAudioProvider,
   SplitFlapMuteToggle,
+  useSplitFlapAudio,
 } from "@/components/split-flap-text";
 
 // ─── Types ───────────────────────────────────────────────────────────
@@ -31,16 +32,14 @@ export function BrandSplitFlap({
   className = "",
 }: BrandSplitFlapProps) {
   return (
-    <SplitFlapAudioProvider>
-      <div className={`w-full max-w-full h-min overflow-hidden ${className}`}>
-        <BrandSplitFlapInner text={text} color={color} speed={speed} />
-        {showMuteToggle && (
-          <div className="mt-4">
-            <SplitFlapMuteToggle />
-          </div>
-        )}
-      </div>
-    </SplitFlapAudioProvider>
+    <div className={`w-full max-w-full h-min overflow-hidden ${className}`}>
+      <BrandSplitFlapInner text={text} color={color} speed={speed} />
+      {showMuteToggle && (
+        <div className="mt-4">
+          <SplitFlapMuteToggle />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -59,6 +58,7 @@ function BrandSplitFlapInner({
   const [hasInitialized, setHasInitialized] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(32);
+  const audio = useSplitFlapAudio();
 
   // Dynamically compute the largest font size that fits the container
   useEffect(() => {
@@ -109,6 +109,7 @@ function BrandSplitFlapInner({
           skipEntrance={hasInitialized}
           speed={speed}
           color={color}
+          playClick={audio?.playClick}
         />
       ))}
     </div>
@@ -123,6 +124,7 @@ function BrandChar({
   skipEntrance,
   speed,
   color,
+  playClick,
 }: {
   char: string;
   index: number;
@@ -130,6 +132,7 @@ function BrandChar({
   skipEntrance: boolean;
   speed: number;
   color: string;
+  playClick?: () => void;
 }) {
   const displayChar = CHARSET.includes(char) ? char : " ";
   const isSpace = char === " ";
@@ -173,9 +176,11 @@ function BrandChar({
           if (intervalRef.current) clearInterval(intervalRef.current);
           setCurrentChar(displayChar);
           setIsSettled(true);
+          if (playClick) playClick();
           return;
         }
         setCurrentChar(CHARSET[Math.floor(Math.random() * CHARSET.length)]);
+        if (flipIndex % 2 === 0 && playClick) playClick();
         flipIndex++;
       }, speed);
     }, startDelay);
@@ -192,6 +197,7 @@ function BrandChar({
     skipEntrance,
     index,
     speed,
+    playClick,
   ]);
 
   if (isSpace) {

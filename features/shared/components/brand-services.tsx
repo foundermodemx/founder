@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/features/shared/components/section-header";
 import type { Brand } from "@/features/shared/data/brands";
+import { useLanguage } from "@/features/i18n/use-language";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -20,6 +21,12 @@ export function BrandServices({
 }: BrandServicesProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
+
+  // Get translated brand data
+  const brandSlug = brand.slug as keyof typeof t.brand.brands;
+  const brandI18n = t.brand.brands[brandSlug];
+  const services = brandI18n?.services || brand.services;
 
   useEffect(() => {
     if (!sectionRef.current || !cardsRef.current) return;
@@ -57,8 +64,8 @@ export function BrandServices({
     >
       <SectionHeader
         number={sectionNumber}
-        label="Services"
-        title="WHAT WE DO"
+        label={t.brand.servicesLabel}
+        title={t.brand.servicesTitle}
         accentColor={brand.accent}
       />
 
@@ -68,7 +75,7 @@ export function BrandServices({
         className="flex gap-8 overflow-x-auto pb-8 scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {brand.services.map((service, index) => (
+        {services.map((service, index) => (
           <article
             key={index}
             className={cn(
@@ -82,18 +89,11 @@ export function BrandServices({
 
               <div className="flex items-baseline justify-between mb-8">
                 <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                  Service {String(index + 1).padStart(2, "0")}
+                  {t.brand.serviceLabel} {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
 
-              <h3
-                className="font-(--font-bebas) text-4xl tracking-tight mb-4 transition-colors duration-300"
-                style={
-                  {
-                    // Use brand accent on hover via CSS
-                  }
-                }
-              >
+              <h3 className="font-(--font-bebas) text-4xl tracking-tight mb-4 transition-colors duration-300">
                 <span className="group-hover:opacity-0 transition-opacity duration-300 absolute">
                   {service.title}
                 </span>

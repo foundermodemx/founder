@@ -1,45 +1,18 @@
-"use client"
+"use client";
 
-import { useRef, useState, useEffect } from "react"
-import { cn } from "@/lib/utils"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-gsap.registerPlugin(ScrollTrigger)
-
-const services = [
-  {
-    icon: "01",
-    title: "Web Development",
-    note: "Custom web applications built with React, Next.js, and modern frameworks. Scalable, fast, and SEO-optimized.",
-  },
-  {
-    icon: "02",
-    title: "Mobile Apps",
-    note: "Native and cross-platform mobile applications for iOS and Android using React Native and Flutter.",
-  },
-  {
-    icon: "03",
-    title: "API & Backend",
-    note: "Robust backend systems, RESTful APIs, and microservices architecture with Node.js, Python, and Go.",
-  },
-  {
-    icon: "04",
-    title: "Cloud & DevOps",
-    note: "Infrastructure setup, CI/CD pipelines, and cloud deployment on AWS, GCP, and Azure.",
-  },
-  {
-    icon: "05",
-    title: "AI Integration",
-    note: "Machine learning models, chatbots, and AI-powered features integrated into your existing products.",
-  },
-]
+import { useRef, useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/features/i18n/use-language";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 function ServiceCard({
   service,
-  // index,
+  serviceLabel,
 }: {
-  service: { icon: string; title: string; note: string }
-  // index: number
+  service: { icon: string; title: string; note: string };
+  serviceLabel: string;
 }) {
   return (
     <article
@@ -54,7 +27,7 @@ function ServiceCard({
 
         <div className="flex items-baseline justify-between mb-8">
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            Service {service.icon}
+            {serviceLabel} {service.icon}
           </span>
         </div>
 
@@ -64,7 +37,9 @@ function ServiceCard({
 
         <div className="w-12 h-px bg-accent/60 mb-6 group-hover:w-full transition-all duration-500" />
 
-        <p className="font-mono text-xs text-muted-foreground leading-relaxed">{service.note}</p>
+        <p className="font-mono text-xs text-muted-foreground leading-relaxed">
+          {service.note}
+        </p>
 
         <div className="absolute bottom-0 right-0 w-6 h-6 overflow-hidden">
           <div className="absolute bottom-0 right-0 w-8 h-8 bg-background rotate-45 translate-x-4 translate-y-4 border-t border-l border-border/30" />
@@ -73,52 +48,59 @@ function ServiceCard({
 
       <div className="absolute inset-0 -z-10 translate-x-1 translate-y-1 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </article>
-  )
+  );
 }
 
 export function SignalsSection() {
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
-  const cursorRef = useRef<HTMLDivElement>(null)
-  const [isHovering, setIsHovering] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const { t } = useLanguage();
+
+  const services = t.signals.items.map((item, i) => ({
+    icon: String(i + 1).padStart(2, "0"),
+    title: item.title,
+    note: item.note,
+  }));
 
   useEffect(() => {
-    if (!sectionRef.current || !cursorRef.current) return
+    if (!sectionRef.current || !cursorRef.current) return;
 
-    const section = sectionRef.current
-    const cursor = cursorRef.current
+    const section = sectionRef.current;
+    const cursor = cursorRef.current;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = section.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
+      const rect = section.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
       gsap.to(cursor, {
         x: x,
         y: y,
         duration: 0.5,
         ease: "power3.out",
-      })
-    }
+      });
+    };
 
-    const handleMouseEnter = () => setIsHovering(true)
-    const handleMouseLeave = () => setIsHovering(false)
+    const handleMouseEnter = () => setIsHovering(true);
+    const handleMouseLeave = () => setIsHovering(false);
 
-    section.addEventListener("mousemove", handleMouseMove)
-    section.addEventListener("mouseenter", handleMouseEnter)
-    section.addEventListener("mouseleave", handleMouseLeave)
+    section.addEventListener("mousemove", handleMouseMove);
+    section.addEventListener("mouseenter", handleMouseEnter);
+    section.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      section.removeEventListener("mousemove", handleMouseMove)
-      section.removeEventListener("mouseenter", handleMouseEnter)
-      section.removeEventListener("mouseleave", handleMouseLeave)
-    }
-  }, [])
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseenter", handleMouseEnter);
+      section.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!sectionRef.current || !headerRef.current || !cardsRef.current) return
+    if (!sectionRef.current || !headerRef.current || !cardsRef.current) return;
 
     const ctx = gsap.context(() => {
       // Header slide in from left
@@ -136,9 +118,9 @@ export function SignalsSection() {
             toggleActions: "play none none reverse",
           },
         },
-      )
+      );
 
-      const cards = cardsRef.current?.querySelectorAll("article")
+      const cards = cardsRef.current?.querySelectorAll("article");
       if (cards) {
         gsap.fromTo(
           cards,
@@ -155,15 +137,19 @@ export function SignalsSection() {
               toggleActions: "play none none reverse",
             },
           },
-        )
+        );
       }
-    }, sectionRef)
+    }, sectionRef);
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section id="signals" ref={sectionRef} className="relative py-32 pl-6 md:pl-28">
+    <section
+      id="signals"
+      ref={sectionRef}
+      className="relative py-32 pl-6 md:pl-28"
+    >
       <div
         ref={cursorRef}
         className={cn(
@@ -176,23 +162,31 @@ export function SignalsSection() {
 
       {/* Section header */}
       <div ref={headerRef} className="mb-16 pr-6 md:pr-12">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">01 / Services</span>
-        <h2 className="mt-4 font-(--font-bebas) text-5xl md:text-7xl tracking-tight">WHAT WE DO</h2>
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
+          {t.signals.sectionLabel}
+        </span>
+        <h2 className="mt-4 font-(--font-bebas) text-5xl md:text-7xl tracking-tight">
+          {t.signals.title}
+        </h2>
       </div>
 
       {/* Horizontal scroll container */}
       <div
         ref={(el) => {
-          scrollRef.current = el
-          cardsRef.current = el
+          scrollRef.current = el;
+          cardsRef.current = el;
         }}
         className="flex gap-8 overflow-x-auto pb-8 pr-12 scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {services.map((service, index) => (
-          <ServiceCard key={index} service={service} />
+          <ServiceCard
+            key={index}
+            service={service}
+            serviceLabel={t.signals.serviceLabel}
+          />
         ))}
       </div>
     </section>
-  )
+  );
 }

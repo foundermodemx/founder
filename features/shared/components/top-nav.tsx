@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { brands } from "@/features/shared/data/brands";
 import { BrandSplitFlap } from "./brand-split-flap";
+import { LanguageSwitcher } from "@/features/i18n/language-switcher";
 
 export function TopNav() {
   const pathname = usePathname();
@@ -44,6 +45,7 @@ export function TopNav() {
               </Link>
             );
           })}
+          <LanguageSwitcher />
         </div>
 
         {/* Mobile hamburger */}
@@ -71,7 +73,7 @@ export function TopNav() {
       <div
         className={cn(
           "md:hidden overflow-hidden transition-all duration-300 border-b border-border/30 bg-background/95 backdrop-blur-md",
-          isMenuOpen ? "max-h-80" : "max-h-0 border-b-0",
+          isMenuOpen ? "max-h-96" : "max-h-0 border-b-0",
         )}
       >
         <div className="px-6 py-4 space-y-3">
@@ -102,6 +104,9 @@ export function TopNav() {
               </Link>
             );
           })}
+          <div className="pt-2">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </nav>

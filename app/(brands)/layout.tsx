@@ -4,6 +4,15 @@ import type React from "react";
 import { usePathname } from "next/navigation";
 import { TopNav } from "@/features/shared/components/top-nav";
 import { getBrandBySlug } from "@/features/shared/data/brands";
+import { Sidebar } from "@/features/shared/components/sidebar/sidebar";
+
+const brandSidebarItems = [
+  { id: "hero", label: "Home" },
+  { id: "services", label: "Services" },
+  { id: "portfolio", label: "Portfolio" },
+  { id: "contact", label: "Contact" },
+  { id: "colophon", label: "Ecosystem" },
+];
 
 export default function SubBrandLayout({
   children,
@@ -17,6 +26,7 @@ export default function SubBrandLayout({
   return (
     <div style={{ "--brand-accent": brand?.accent } as React.CSSProperties}>
       <TopNav />
+      <Sidebar brand={slug} items={brandSidebarItems} />
       <div className="pt-14">{children}</div>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   useContext,
 } from "react";
 import { Volume2, VolumeX } from "lucide-react";
+import { useLanguage } from "@/features/i18n/use-language";
 
 interface AudioContextType {
   isMuted: boolean;
@@ -21,16 +22,18 @@ interface AudioContextType {
 
 const SplitFlapAudioContext = createContext<AudioContextType | null>(null);
 
-function useSplitFlapAudio() {
+export function useSplitFlapAudio() {
   return useContext(SplitFlapAudioContext);
 }
 
 export function SplitFlapAudioProvider({
   children,
+  defaultMuted = true,
 }: {
   children: React.ReactNode;
+  defaultMuted?: boolean;
 }) {
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(defaultMuted);
   const audioContextRef = useRef<AudioContext | null>(null);
 
   const getAudioContext = useCallback(() => {
@@ -135,20 +138,21 @@ export function SplitFlapMuteToggle({
   className?: string;
 }) {
   const audio = useSplitFlapAudio();
+  const { t } = useLanguage();
   if (!audio) return null;
 
   return (
     <button
       onClick={audio.toggleMute}
       className={`inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-200 ${className}`}
-      aria-label={audio.isMuted ? "Unmute sound effects" : "Mute sound effects"}
+      aria-label={audio.isMuted ? t.common.unmute : t.common.mute}
     >
       {audio.isMuted ? (
         <VolumeX className="w-4 h-4" />
       ) : (
         <Volume2 className="w-4 h-4" />
       )}
-      <span>{audio.isMuted ? "Sound Off" : "Sound On"}</span>
+      <span>{audio.isMuted ? t.common.soundOff : t.common.soundOn}</span>
     </button>
   );
 }

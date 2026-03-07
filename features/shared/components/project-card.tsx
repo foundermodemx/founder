@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLanguage } from "@/features/i18n/use-language";
 import type { Project } from "@/features/shared/data/projects";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,6 +25,25 @@ export function ProjectCard({
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
   const [isScrollActive, setIsScrollActive] = useState(false);
+  const { t } = useLanguage();
+
+  // Map project ID to translation key
+  const projectIdToKey: Record<string, keyof typeof t.projects> = {
+    rastreadito: "rastreadito",
+    "dispensary-hub": "dispensaryHub",
+    "growth-engine": "growthEngine",
+    "brand-forge": "brandForge",
+    "fleet-tracker": "fleetTracker",
+    "catalyst-cms": "catalystCms",
+    "verde-analytics": "verdeAnalytics",
+    "launch-pad": "launchPad",
+    "pixel-studio": "pixelStudio",
+    "code-forge": "codeForge",
+  };
+
+  const projectI18n = t.projects[projectIdToKey[project.id]];
+  const description = projectI18n?.description || project.description;
+  const medium = projectI18n?.medium || project.medium;
 
   useEffect(() => {
     if (!persistHover || !cardRef.current) return;
@@ -71,7 +91,7 @@ export function ProjectCard({
       {/* Content */}
       <div className="relative z-10">
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          {project.medium}
+          {medium}
         </span>
         <h3
           className={cn(
@@ -91,7 +111,7 @@ export function ProjectCard({
             isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
           )}
         >
-          {project.description}
+          {description}
         </p>
       </div>
 
@@ -127,11 +147,11 @@ export function ProjectCard({
         )}
       >
         <div
-          className="absolute top-0 right-0 w-full h-[1px]"
+          className="absolute top-0 right-0 w-full h-px"
           style={{ backgroundColor: accent }}
         />
         <div
-          className="absolute top-0 right-0 w-[1px] h-full"
+          className="absolute top-0 right-0 w-px h-full"
           style={{ backgroundColor: accent }}
         />
       </div>

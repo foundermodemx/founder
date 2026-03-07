@@ -1,61 +1,37 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { cn } from "@/lib/utils"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/features/i18n/use-language";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
-const experiments = [
-  {
-    title: "FinTech Platform",
-    medium: "Web Application",
-    description: "Full-stack financial management platform with real-time analytics and secure transactions.",
-    span: "col-span-2 row-span-2",
-  },
-  {
-    title: "E-Commerce Suite",
-    medium: "Mobile & Web",
-    description: "Scalable commerce solution with inventory management and payment integration.",
-    span: "col-span-1 row-span-1",
-  },
-  {
-    title: "Healthcare Portal",
-    medium: "Enterprise Software",
-    description: "HIPAA-compliant patient management system with telemedicine features.",
-    span: "col-span-1 row-span-2",
-  },
-  {
-    title: "SaaS Dashboard",
-    medium: "Product Design",
-    description: "Analytics dashboard with customizable widgets and data visualization.",
-    span: "col-span-1 row-span-1",
-  },
-  {
-    title: "AI Integration",
-    medium: "Machine Learning",
-    description: "Custom AI solutions for automated workflows and intelligent data processing.",
-    span: "col-span-2 row-span-1",
-  },
-  {
-    title: "API Gateway",
-    medium: "Infrastructure",
-    description: "High-performance API management with rate limiting and authentication.",
-    span: "col-span-1 row-span-1",
-  },
-]
+const spans = [
+  "col-span-2 row-span-2",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-2",
+  "col-span-1 row-span-1",
+  "col-span-2 row-span-1",
+  "col-span-1 row-span-1",
+];
 
 export function WorkSection() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
+
+  const experiments = t.experiments.map((exp, i) => ({
+    ...exp,
+    span: spans[i] || "col-span-1 row-span-1",
+  }));
 
   useEffect(() => {
-    if (!sectionRef.current || !headerRef.current || !gridRef.current) return
+    if (!sectionRef.current || !headerRef.current || !gridRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Header slide in from left
       gsap.fromTo(
         headerRef.current,
         { x: -60, opacity: 0 },
@@ -70,11 +46,11 @@ export function WorkSection() {
             toggleActions: "play none none reverse",
           },
         },
-      )
+      );
 
-      const cards = gridRef.current?.querySelectorAll("article")
+      const cards = gridRef.current?.querySelectorAll("article");
       if (cards && cards.length > 0) {
-        gsap.set(cards, { y: 60, opacity: 0 })
+        gsap.set(cards, { y: 60, opacity: 0 });
         gsap.to(cards, {
           y: 0,
           opacity: 1,
@@ -86,23 +62,31 @@ export function WorkSection() {
             start: "top 90%",
             toggleActions: "play none none reverse",
           },
-        })
+        });
       }
-    }, sectionRef)
+    }, sectionRef);
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section ref={sectionRef} id="work" className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12">
+    <section
+      ref={sectionRef}
+      id="work"
+      className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12"
+    >
       {/* Section header */}
       <div ref={headerRef} className="mb-16 flex items-end justify-between">
         <div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">02 / Portfolio</span>
-          <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">SELECTED WORK</h2>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
+            {t.work.sectionLabel}
+          </span>
+          <h2 className="mt-4 font-(--font-bebas) text-5xl md:text-7xl tracking-tight">
+            {t.work.title}
+          </h2>
         </div>
         <p className="hidden md:block max-w-xs font-mono text-xs text-muted-foreground text-right leading-relaxed">
-          Solutions across web development, mobile apps, and enterprise systems.
+          {t.work.subtitle}
         </p>
       </div>
 
@@ -112,11 +96,16 @@ export function WorkSection() {
         className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[180px] md:auto-rows-[200px]"
       >
         {experiments.map((experiment, index) => (
-          <WorkCard key={index} experiment={experiment} index={index} persistHover={index === 0} />
+          <WorkCard
+            key={index}
+            experiment={experiment}
+            index={index}
+            persistHover={index === 0}
+          />
         ))}
       </div>
     </section>
-  )
+  );
 }
 
 function WorkCard({
@@ -125,33 +114,33 @@ function WorkCard({
   persistHover = false,
 }: {
   experiment: {
-    title: string
-    medium: string
-    description: string
-    span: string
-  }
-  index: number
-  persistHover?: boolean
+    title: string;
+    medium: string;
+    description: string;
+    span: string;
+  };
+  index: number;
+  persistHover?: boolean;
 }) {
-  const [isHovered, setIsHovered] = useState(false)
-  const cardRef = useRef<HTMLElement>(null)
-  const [isScrollActive, setIsScrollActive] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+  const [isScrollActive, setIsScrollActive] = useState(false);
 
   useEffect(() => {
-    if (!persistHover || !cardRef.current) return
+    if (!persistHover || !cardRef.current) return;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: cardRef.current,
         start: "top 80%",
         onEnter: () => setIsScrollActive(true),
-      })
-    }, cardRef)
+      });
+    }, cardRef);
 
-    return () => ctx.revert()
-  }, [persistHover])
+    return () => ctx.revert();
+  }, [persistHover]);
 
-  const isActive = isHovered || isScrollActive
+  const isActive = isHovered || isScrollActive;
 
   return (
     <article
@@ -216,9 +205,9 @@ function WorkCard({
           isActive ? "opacity-100" : "opacity-0",
         )}
       >
-        <div className="absolute top-0 right-0 w-full h-[1px] bg-accent" />
-        <div className="absolute top-0 right-0 w-[1px] h-full bg-accent" />
+        <div className="absolute top-0 right-0 w-full h-px bg-accent" />
+        <div className="absolute top-0 right-0 w-px h-full bg-accent" />
       </div>
     </article>
-  )
+  );
 }

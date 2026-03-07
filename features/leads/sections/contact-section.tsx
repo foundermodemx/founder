@@ -1,30 +1,31 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { brands } from "@/features/shared/data/brands";
-import { BrandCard } from "@/features/shared/components/brand-card";
+import { LeadForm } from "../components/lead-form";
 import { useLanguage } from "@/features/i18n/use-language";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function EcosystemSection() {
+interface ContactSectionProps {
+  accentColor?: string;
+}
+
+export function ContactSection({ accentColor }: ContactSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
-    if (!sectionRef.current || !headerRef.current || !gridRef.current) return;
+    if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headerRef.current,
-        { x: -60, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          x: -60,
+          opacity: 0,
           duration: 1,
           ease: "power3.out",
           scrollTrigger: {
@@ -32,20 +33,18 @@ export function EcosystemSection() {
             start: "top 85%",
             toggleActions: "play none none reverse",
           },
-        },
-      );
+        });
+      }
 
-      const cards = gridRef.current?.querySelectorAll("a");
-      if (cards && cards.length > 0) {
-        gsap.from(cards, {
+      if (formRef.current) {
+        gsap.from(formRef.current, {
           y: 40,
           opacity: 0,
           duration: 0.8,
-          stagger: 0.1,
           ease: "power3.out",
           scrollTrigger: {
-            trigger: gridRef.current,
-            start: "top 95%",
+            trigger: formRef.current,
+            start: "top 85%",
             toggleActions: "play none none reverse",
           },
         });
@@ -58,30 +57,28 @@ export function EcosystemSection() {
   return (
     <section
       ref={sectionRef}
-      id="ecosystem"
-      className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12"
+      id="contact"
+      className="relative py-32 px-6 md:px-12 lg:px-20 border-t border-border/30"
+      style={
+        accentColor
+          ? ({ "--brand-accent": accentColor } as React.CSSProperties)
+          : undefined
+      }
     >
-      {/* Section header */}
       <div ref={headerRef} className="mb-16">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
-          {t.ecosystem.sectionLabel}
+          {t.lead.sectionLabel}
         </span>
         <h2 className="mt-4 font-(--font-bebas) text-5xl md:text-7xl tracking-tight">
-          {t.ecosystem.title}
+          {t.lead.title}
         </h2>
         <p className="mt-6 max-w-2xl font-mono text-sm text-muted-foreground leading-relaxed">
-          {t.ecosystem.description}
+          {t.lead.description}
         </p>
       </div>
 
-      {/* Brand grid */}
-      <div
-        ref={gridRef}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-      >
-        {brands.map((brand, index) => (
-          <BrandCard key={brand.slug} brand={brand} index={index} />
-        ))}
+      <div ref={formRef} className="max-w-3xl">
+        <LeadForm />
       </div>
     </section>
   );

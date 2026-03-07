@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { Brand } from "@/features/shared/data/brands";
 
+import { useLanguage } from "@/features/i18n/use-language";
+
 interface BrandCardProps {
   brand: Brand;
   index: number;
@@ -12,6 +14,11 @@ interface BrandCardProps {
 
 export function BrandCard({ brand, index }: BrandCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useLanguage();
+
+  // Get translated brand data
+  const brandSlug = brand.slug as keyof typeof t.brand.brands;
+  const brandI18n = t.brand.brands[brandSlug];
 
   return (
     <Link href={`/${brand.slug}`}>
@@ -50,7 +57,7 @@ export function BrandCard({ brand, index }: BrandCardProps) {
         {/* Content */}
         <div className="relative z-10">
           <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            {brand.tagline}
+            {brandI18n?.tagline || brand.tagline}
           </span>
           <h3
             className="mt-3 font-(--font-bebas) text-3xl md:text-4xl tracking-tight transition-colors duration-300"
@@ -70,7 +77,7 @@ export function BrandCard({ brand, index }: BrandCardProps) {
                 : "opacity-70 translate-y-0",
             )}
           >
-            {brand.description.substring(0, 120)}...
+            {(brandI18n?.description || brand.description).substring(0, 120)}...
           </p>
         </div>
 
@@ -92,11 +99,11 @@ export function BrandCard({ brand, index }: BrandCardProps) {
           )}
         >
           <div
-            className="absolute top-0 right-0 w-full h-[1px]"
+            className="absolute top-0 right-0 w-full h-px"
             style={{ backgroundColor: brand.accent }}
           />
           <div
-            className="absolute top-0 right-0 w-[1px] h-full"
+            className="absolute top-0 right-0 w-px h-full"
             style={{ backgroundColor: brand.accent }}
           />
         </div>
