@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { TopNav } from "@/features/shared/components/top-nav";
 import { getBrandBySlug } from "@/features/shared/data/brands";
 import { Sidebar } from "@/features/shared/components/sidebar/sidebar";
+import { useEffect } from "react";
 
 const brandSidebarItems = [
   { id: "hero", label: "Home" },
@@ -22,6 +23,11 @@ export default function SubBrandLayout({
   const pathname = usePathname();
   const slug = pathname.split("/").filter(Boolean)[0];
   const brand = getBrandBySlug(slug);
+
+  // Reset scroll to top on brand navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <div style={{ "--brand-accent": brand?.accent } as React.CSSProperties}>

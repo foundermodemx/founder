@@ -23,6 +23,7 @@ export function Sidebar({ brand, items }: SidebarProps) {
   useEffect(() => {
     if (items && items.length > 0) {
       setNavItems(items);
+      setActiveSection(items[0].id); // Reset active section to top when items/brand changes
       return;
     }
 
@@ -47,33 +48,38 @@ export function Sidebar({ brand, items }: SidebarProps) {
       setNavItems(detected);
       setActiveSection(detected[0].id);
     }
-  }, [items]);
+  }, [items, brand]); // Added brand dependency
 
   // IntersectionObserver for active section tracking
   useEffect(() => {
     if (navItems.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the section that is most visible
-        const visibleEntry = entries.find((e) => e.isIntersecting);
-        if (visibleEntry) {
-          setActiveSection(visibleEntry.target.id);
-        }
-      },
-      {
-        rootMargin: "-20% 0px -70% 0px", // Focus on the upper-middle of the screen
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5],
-      },
-    );
+    // Use a small timeout to let the new DOM settle
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          // Find the section that is most visible
+          const visibleEntry = entries.find((e) => e.isIntersecting);
+          if (visibleEntry) {
+            setActiveSection(visibleEntry.target.id);
+          }
+        },
+        {
+          rootMargin: "-20% 0px -70% 0px", // Focus on the upper-middle of the screen
+          threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+        },
+      );
 
-    navItems.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) observer.observe(element);
-    });
+      navItems.forEach(({ id }) => {
+        const element = document.getElementById(id);
+        if (element) observer.observe(element);
+      });
 
-    return () => observer.disconnect();
-  }, [navItems]);
+      return () => observer.disconnect();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [navItems, brand]); // Added brand dependency
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
